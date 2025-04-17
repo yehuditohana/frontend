@@ -1,32 +1,47 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getItemsByCategory, searchItemsByName } from "../api/itemAPI";
-import { getGeneralCategories } from "../api/categoryAPI";
+import { fetchCategories as fetchCategoriesAPI } from "../api/categoryAPI";
+
 const ItemContext = createContext();
 
+/**
+ * ItemProvider manages the state and data operations related to items and categories.
+ * It provides context for item list, loading state, errors, and category filtering.
+ */
 export const ItemProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // נטען קטגוריות בהתחלה
+  // Load categories on mount
   useEffect(() => {
-    fetchCategories();
+    loadCategories();
   }, []);
 
-  const fetchCategories = async () => {
+  /**
+   * Loads category hierarchy from the backend.
+   */
+  const loadCategories = async () => {
     try {
       setLoading(true);
-      const result = await getGeneralCategories();
+      const result = await fetchCategoriesAPI();
       setCategories(result);
     } catch (err) {
-      setError("נכשל בטעינת קטגוריות");
+      setError("Failed to load categories");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Fetch items by general and sub category.
+   *
+   * @param {string} generalCategory - The general category name.
+   * @param {string} subCategory - The sub category name.
+   * @returns {Promise<Array>} List of items.
+   */
   const fetchItemsByCategory = async (generalCategory, subCategory) => {
     try {
       setLoading(true);
@@ -34,7 +49,7 @@ export const ItemProvider = ({ children }) => {
       setItems(results);
       return results;
     } catch (err) {
-      setError("נכשל בטעינת פריטים לפי קטגוריה");
+      setError("Failed to fetch items by category");
       console.error(err);
       return [];
     } finally {
@@ -42,6 +57,12 @@ export const ItemProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Search items by query string.
+   *
+   * @param {string} query - Search input string.
+   * @returns {Promise<Array>} List of matching items.
+   */
   const searchItems = async (query) => {
     try {
       setLoading(true);
@@ -49,7 +70,7 @@ export const ItemProvider = ({ children }) => {
       setItems(results);
       return results;
     } catch (err) {
-      setError("שגיאה בעת החיפוש");
+      setError("Search error");
       console.error(err);
       return [];
     } finally {
@@ -73,4 +94,7 @@ export const ItemProvider = ({ children }) => {
   );
 };
 
+/**
+ * Custom hook to access item context.
+ */
 export const useItems = () => useContext(ItemContext);

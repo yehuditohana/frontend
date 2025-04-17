@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { logoutUser } from "../api/userAPI"; 
 
 const UserContext = createContext();
 
@@ -20,7 +21,18 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const sessionNumber = storedUser?.sessionNumber;
+  
+    if (sessionNumber) {
+      try {
+        await logoutUser(sessionNumber);
+      } catch (err) {
+        console.error("שגיאה בעת התנתקות מהשרת:", err);
+      }
+    }
+  
     setCurrentUser(null);
     localStorage.removeItem("user");
   };

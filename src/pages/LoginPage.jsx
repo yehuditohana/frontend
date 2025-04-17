@@ -33,22 +33,21 @@ const LoginPage = () => {
     try {
       const userData = await loginUser(form.email, form.password);
 
-      // קצת רשת ביטחון נגד מבני נתונים מוזרים
-      const user = userData?.user || {};
+
       const token = userData?.token || "";
 
       login({
-        email: form.email,
-        name: user.name || "אנונימי",
-        id: user.id || null,
-        token,
+        email: userData.email,
+        name: userData.username,
+        id: userData.userId,
+        sessionNumber: userData.sessionNumber, 
       });
 
       setForm({ email: "", password: "" });
       navigate("/");
     } catch (err) {
       setError(
-        err?.message || "אירעה שגיאה כללית, ייתכן שהשרת כרגע עסוק בלבכות בשירותים"
+        err?.message || "אירעה שגיאה כללית"
       );
       errRef.current?.focus();
     } finally {

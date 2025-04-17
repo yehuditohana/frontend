@@ -1,7 +1,7 @@
 // src/api/loginAPI.js
 export const loginUser = async (email, password) => {
   const response = await fetch(
-    `http://localhost:5000/users/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+    `http://localhost:8080/api/users/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
     {
       method: "POST",
       headers: {

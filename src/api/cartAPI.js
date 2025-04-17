@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/shopping-carts";
+const BASE_URL = "http://localhost:8080/api/shopping-carts";
 
 export const createCart = async (user) => {
   const response = await fetch(`${BASE_URL}/new`, {

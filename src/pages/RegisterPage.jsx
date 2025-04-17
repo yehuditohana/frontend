@@ -107,8 +107,12 @@ const RegisterPage = () => {
       setSuccess(true);
 
       // Log user in with data from response
-      login(userData);
-
+      login({
+        email: userData.email,
+        name: userData.username,
+        id: userData.userId,
+        sessionNumber: userData.sessionNumber, 
+      });
       // Clear form
       setForm({ name: "", email: "", password: "", confirmPassword: "" });
 

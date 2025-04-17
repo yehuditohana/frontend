@@ -68,7 +68,7 @@ const Navbar = () => {
           <Link to="/" className={linkClasses("/")}>
             דף הבית
           </Link>
-          <Link to="/products" className={linkClasses("/products")}>
+          <Link to="/items" className={linkClasses("/products")}>
             כלל המוצרים
           </Link>
           {currentUser && (

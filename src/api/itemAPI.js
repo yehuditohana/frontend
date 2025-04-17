@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/item";
+const BASE_URL = "http://localhost:8080/api/item";
 
 /**
  * Search items by name

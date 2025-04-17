@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/cart-items";
+const BASE_URL = "http://localhost:8080/api/cart-items";
 
 export const addItemToCart = async (cartId, itemId, quantity) => {
   const url = `${BASE_URL}/${cartId}/items/${itemId}?quantity=${quantity}`;

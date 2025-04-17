@@ -19,7 +19,7 @@ const HomePage = () => {
         <div className="max-w-4xl mx-auto px-4">
           <h1 className="text-5xl md:text-6xl font-bold text-blue-900 mb-6 leading-tight">
             {currentUser
-              ? `ברוך/ה הבא/ה, ${currentUser.name}! 👋`
+              ? `ברוך/ה הבא/ה, ${currentUser?.name || currentUser?.username || "אנונימי"}! 👋`
               : "השוואה חכמה בין מחירים בסופרמרקטים"}
           </h1>
 
@@ -31,7 +31,7 @@ const HomePage = () => {
 
           <div className="flex justify-center gap-4 flex-wrap">
             <Link
-              to="/products"
+              to="/items"
               className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               עיון במוצרים ←
