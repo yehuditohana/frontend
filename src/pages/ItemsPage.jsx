@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import ItemCard from "../components/ItemCard";
 import ItemModal from "../components/ItemModal";
 import { FiSearch } from "react-icons/fi";
-import CategorySidebar from "../components/CategorySidebar"; // קומפוננטת הקטגוריות
+import CategorySidebar from "../components/CategorySidebar";
 
 const ItemsPage = () => {
   const { items, searchItems, fetchItemsByCategory } = useItems();
@@ -35,7 +35,12 @@ const ItemsPage = () => {
         if (debouncedSearchQuery.trim()) {
           results = await searchItems(debouncedSearchQuery);
         } else if (selectedCategory) {
-          results = await fetchItemsByCategory(selectedCategory);
+          const { generalCategory, subCategory } = selectedCategory;
+          if (generalCategory && subCategory) {
+            results = await fetchItemsByCategory(generalCategory, subCategory);
+          } else {
+            console.warn("⚠️ קטגוריה לא שלמה לבקשת פריטים:", selectedCategory);
+          }
         } else {
           results = items;
         }
@@ -50,13 +55,7 @@ const ItemsPage = () => {
     };
 
     applyFilters();
-  }, [
-    debouncedSearchQuery,
-    selectedCategory,
-    items,
-    searchItems,
-    fetchItemsByCategory,
-  ]);
+  }, [debouncedSearchQuery, selectedCategory, items, searchItems, fetchItemsByCategory]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,10 +82,12 @@ const ItemsPage = () => {
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Sidebar – קטגוריות */}
-        <CategorySidebar onSelectCategory={(category) => {
-          setSelectedCategory(category);
-          setSearchQuery(""); // איפוס חיפוש כשבוחרים קטגוריה
-        }} />
+        <CategorySidebar
+          onSelectCategory={(categoryObj) => {
+            setSelectedCategory(categoryObj);
+            setSearchQuery(""); // איפוס חיפוש כשבוחרים קטגוריה
+          }}
+        />
 
         {/* תוכן ראשי */}
         <div className="flex-1">
@@ -106,10 +107,7 @@ const ItemsPage = () => {
           {filteredItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {filteredItems.slice(0, visibleItems).map((item) => (
-                <ItemCard
-                  key={item.id || `item-${Math.random()}`}
-                  item={item}
-                />
+                <ItemCard key={item.id || `item-${Math.random()}`} item={item} />
               ))}
             </div>
           ) : (

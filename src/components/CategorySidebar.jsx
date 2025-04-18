@@ -10,16 +10,33 @@ const CategorySidebar = ({ onSelectCategory }) => {
     const fetchAll = async () => {
       try {
         const data = await fetchCategories();
+        console.log("📦 קטגוריות שהתקבלו מה־API:", data); 
         setCategories(data);
       } catch (error) {
         console.error("❌ Error fetching categories:", error);
       }
     };
-
+   
     fetchAll();
   }, []);
 
-  console.log("🧭 selectedGeneral:", selectedGeneral);
+  useEffect(() => {
+    fetchCategories().then((data) => {
+      const map = {};
+      data.forEach((item) => {
+        const { generalCategory, subCategory, specificCategory } = item;
+  
+        if (!map[generalCategory]) map[generalCategory] = {};
+        if (!map[generalCategory][subCategory]) map[generalCategory][subCategory] = [];
+  
+        if (!map[generalCategory][subCategory].includes(specificCategory)) {
+          map[generalCategory][subCategory].push(specificCategory);
+        }
+      });
+      setCategoriesMap(map);
+    });
+  }, []);
+  
 
   const goBackToGeneral = () => {
     setSelectedGeneral(null);
@@ -51,7 +68,6 @@ const CategorySidebar = ({ onSelectCategory }) => {
 
       {selectedGeneral && !selectedSub && (
         <>
-          {console.log("📂 subCategories:", selectedGeneral.subCategories)}
           <button
             className="text-sm text-gray-600 underline mb-2"
             onClick={goBackToGeneral}
@@ -64,11 +80,11 @@ const CategorySidebar = ({ onSelectCategory }) => {
           <ul className="space-y-1">
             {selectedGeneral.subCategories.map((sub, index) => (
               <li
-                key={`${sub.subCategoryName}-${index}`}
+                key={`${sub.subCategory}-${index}`}
                 className="cursor-pointer text-blue-700 hover:underline"
                 onClick={() => setSelectedSub(sub)}
               >
-                {sub.subCategoryName}
+                {sub.subCategory}
               </li>
             ))}
           </ul>
@@ -83,13 +99,21 @@ const CategorySidebar = ({ onSelectCategory }) => {
           >
             ← חזרה לתתי קטגוריות
           </button>
-          <h4 className="text-md font-semibold mb-2">{selectedSub.subCategoryName}</h4>
+          <h4 className="text-md font-semibold mb-2">
+            {selectedSub.subCategory}
+          </h4>
           <ul className="space-y-1 pl-2 border-l">
             {selectedSub.specificCategories.map((spec, index) => (
               <li
                 key={`${spec}-${index}`}
                 className="cursor-pointer text-blue-600 hover:underline"
-                onClick={() => onSelectCategory(spec)}
+                //onClick={() => onSelectCategory(spec)}
+                onClick={() => onSelectCategory({
+                  generalCategory: selectedGeneral.generalCategory,
+                  subCategory: selectedSub.subCategory,
+                  specificCategory: spec
+                })}
+                
               >
                 {spec}
               </li>
@@ -102,3 +126,6 @@ const CategorySidebar = ({ onSelectCategory }) => {
 };
 
 export default CategorySidebar;
+
+
+
